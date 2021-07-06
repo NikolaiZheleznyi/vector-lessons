@@ -1,6 +1,12 @@
 package com.solvd.vector;
 
+import java.math.BigInteger;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author asemenkov
@@ -23,6 +29,27 @@ public class Main {
 
         double cos = v1.getCosAngle(v2);
         double scalar = v2.getScalarProduct(v1);
+
+        Random r = new Random(0);
+        List<Vector> vectors = VectorFunctionalUtils.generate(10,r::nextInt);
+        Comparator<Vector> vectorComparator = (a, b) -> {
+            if (a.getLength() < b.getLength()) return -1;
+            else if (a.getLength() > b.getLength()) return 1;
+            else return 0;
+        };
+        vectors = VectorFunctionalUtils.sort(vectors,vectorComparator);
+        List<Vector> sortedVectors = vectors.stream().sorted(vectorComparator.reversed()).
+                collect(Collectors.toList());
+        Function<Vector, Long> vectorLongFunction = vector -> Double.
+                valueOf(vector.getLength()).longValue();
+        List<Long> longList = VectorFunctionalUtils.map(sortedVectors,vectorLongFunction);
+        Stream<Long> stream = longList.stream();
+
+        Long sum = (stream.filter(x -> x % 2 == 0).peek(System.out::println).reduce(0L, Long::sum));
+        System.out.println(sum);
     }
 
 }
+
+
+
